@@ -52,9 +52,3 @@ func SubmitJob() {
 		cron.Recover(log.DefaultLogger()),
 	))
 }
-
-func SubmitJob() {
-	cron.New(cron.WithSeconds(), cron.WithChain(
-		cron.Recover(log.DefaultLogger()),
-	))
-}
