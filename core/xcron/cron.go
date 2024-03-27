@@ -1,4 +1,4 @@
-package cron
+package xcron
 
 import (
 	"context"
@@ -7,18 +7,23 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/jasonlabz/cartl/core/cron/base"
 	"github.com/jasonlabz/cartl/core/log"
+	"github.com/jasonlabz/cartl/core/xcron/base"
 )
 
 var (
-	once    sync.Once
-	crontab *cron.Cron
-	jobMap  sync.Map
+	once                         sync.Once
+	crontab                      *cron.Cron
+	jobMap                       sync.Map
+	secondParser, standardParser cron.Parser
 )
 
 func init() {
 	once.Do(func() {
+		// 初始化标准表达式解析
+		standardParser = cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
+		// 初始化秒级表达式解析
+		secondParser = cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
 		crontab = cron.New(cron.WithLocation(time.Local), cron.WithSeconds(),
 			cron.WithChain(cron.Recover(log.DefaultLogger())))
 	})
