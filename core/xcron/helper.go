@@ -2,11 +2,9 @@ package xcron
 
 import (
 	"fmt"
-	"strings"
-	"time"
-
 	"github.com/jasonlabz/cartl/core/times"
 	"github.com/jasonlabz/cartl/core/utils"
+	"strings"
 )
 
 type CronTaskBuilder struct {
@@ -108,8 +106,8 @@ var (
 // 4、 Day-of-Month （天）
 // 5、 Month（月）
 // 6、 Day-of-Week （周）
-func (b *CronTaskBuilder) GenCrontabStr(jobType JobType, duration time.Duration) (spec string) {
-	after := times.Now().Add(duration)
+func (b *CronTaskBuilder) GenCrontabStr(jobType JobType) (spec string) {
+	after := times.Now()
 	switch jobType {
 	case DayJob:
 		spec = fmt.Sprintf("%d %d %d * * *", after.Second(), after.Minute(), after.Hour())

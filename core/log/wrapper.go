@@ -80,12 +80,8 @@ func (l *loggerWrapper) Warn(msg string, args ...any) {
 	l.logger.Warn(getMessage(msg, args))
 }
 
-func (l *loggerWrapper) Error(err error, msg string, args ...any) {
-	if err != nil {
-		l.logger.With(zap.Error(err)).Error(getMessage(msg, args))
-	} else {
-		l.logger.Error(getMessage(msg, args))
-	}
+func (l *loggerWrapper) Error(msg string, args ...any) {
+	l.logger.Error(getMessage(msg, args))
 }
 
 func (l *loggerWrapper) Panic(msg string, args ...any) {
