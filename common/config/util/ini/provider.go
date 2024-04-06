@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/ini.v1"
 
-	"github.com/jasonlabz/cartl/core/config/util"
+	"github.com/jasonlabz/cartl/common/config/util"
 )
 
 // ConfigProvider YAML configuration provider

@@ -1,6 +1,12 @@
 application:
   name: lg_server
   port: 8630
+  prom:
+    enable: true      # Enable prometheus client
+    path: "metrics"   # Default value is "metrics", set path as needed.
+  pprof:
+    enable: true  # Enable PProf tool
+    port: 8080
 debug: true
 kafka:
   topic: ["XXX"]
@@ -43,13 +49,14 @@ crypto:
 log:
   # 是否写入文件
   write_file: true
-  # true|false
-  json_log: false
-  # error|warn|info|debug
+  # json|console
+  format: console
+  # error|warn|info|debug|fatal
   log_level: debug
   # 文件配置
   log_file_conf:
-    log_file_path: ./log/cartl.log
+    base_path: ./log
+    file_name: cartl.log
     max_size: 10
     max_age: 28
     max_backups: 100

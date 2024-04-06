@@ -1,7 +1,7 @@
 package yaml
 
 import (
-	"github.com/jasonlabz/potato/core/config/util"
+	"github.com/jasonlabz/cartl/common/config/util"
 	"github.com/spf13/viper"
 )
 

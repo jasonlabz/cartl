@@ -7,7 +7,7 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/jasonlabz/cartl/core/xcron/base"
+	"github.com/jasonlabz/cartl/common/xcron/base"
 )
 
 var (

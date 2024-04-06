@@ -1,14 +1,23 @@
 package xcron
 
 import (
-	"github.com/jasonlabz/cartl/core/log"
-	"github.com/jasonlabz/cartl/core/utils"
+	"github.com/jasonlabz/cartl/common/log"
+	"github.com/jasonlabz/cartl/common/utils"
 	"go.uber.org/zap"
 )
 
-var defaultLogger cronLogger = cronLogger{}
+var defaultLogger *cronLogger
 
-type cronLogger struct{}
+func init() {
+	zapLogger := log.InitLogger(log.WithBasePath("cron"), log.WithBasePath("cron"), log.WithFileName("cron.log"))
+	defaultLogger = &cronLogger{
+		zapLogger,
+	}
+}
+
+type cronLogger struct {
+	logger *log.LoggerWrapper
+}
 
 func (l cronLogger) Info(msg string, keysAndValues ...interface{}) {
 	log.DefaultLogger().WithAny(checkFields(keysAndValues)).Info(msg)

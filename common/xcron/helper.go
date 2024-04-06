@@ -2,8 +2,8 @@ package xcron
 
 import (
 	"fmt"
-	"github.com/jasonlabz/cartl/core/times"
-	"github.com/jasonlabz/cartl/core/utils"
+	"github.com/jasonlabz/cartl/common/times"
+	"github.com/jasonlabz/cartl/common/utils"
 	"strings"
 )
 

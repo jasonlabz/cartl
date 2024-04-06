@@ -9,11 +9,11 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/jasonlabz/cartl/core/config/util"
-	"github.com/jasonlabz/cartl/core/config/util/yaml"
-	"github.com/jasonlabz/cartl/core/consts"
-	"github.com/jasonlabz/cartl/core/times"
-	"github.com/jasonlabz/cartl/core/utils"
+	"github.com/jasonlabz/cartl/common/config/util"
+	"github.com/jasonlabz/cartl/common/config/util/yaml"
+	"github.com/jasonlabz/cartl/common/consts"
+	"github.com/jasonlabz/cartl/common/times"
+	"github.com/jasonlabz/cartl/common/utils"
 )
 
 var (
@@ -73,7 +73,7 @@ func WithConfigPath(path string) Option {
 	}
 }
 
-func newLogger(opts ...Option) *loggerWrapper {
+func InitLogger(opts ...Option) *LoggerWrapper {
 	options := &Options{}
 
 	for _, opt := range opts {
@@ -161,7 +161,7 @@ func newLogger(opts ...Option) *loggerWrapper {
 	//生成logger
 	zapLogger := zap.New(zapcore.NewTee(coreArr...), zap.AddCaller(), zap.AddCallerSkip(1)) //zap.AddCaller() 显示文件名 和 行号
 
-	return &loggerWrapper{
+	return &LoggerWrapper{
 		logger:   zapLogger,
 		logField: options.keyList,
 	}
