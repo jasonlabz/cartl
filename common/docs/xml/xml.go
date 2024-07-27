@@ -28,9 +28,21 @@ func LoadXMLFromFilePath(path string) (*xmlquery.Node, error) {
 }
 
 func LoadXMLFromString(s string) (*xmlquery.Node, error) {
+	index := strings.Index(s, "<")
+	if index != -1 {
+		s = s[index:]
+	}
 	doc, err := xmlquery.Parse(strings.NewReader(s))
 	if err != nil {
 		return nil, err
 	}
 	return doc, nil
+}
+
+func Query(doc *xmlquery.Node, expr string) ([]*xmlquery.Node, error) {
+	return xmlquery.QueryAll(doc, expr)
+}
+
+func QueryOne(doc *xmlquery.Node, expr string) (*xmlquery.Node, error) {
+	return xmlquery.Query(doc, expr)
 }

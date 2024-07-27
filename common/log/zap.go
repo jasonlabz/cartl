@@ -10,7 +10,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/jasonlabz/cartl/common/config/util"
-	"github.com/jasonlabz/cartl/common/config/util/yaml"
+	"github.com/jasonlabz/cartl/common/config/util/file"
 	"github.com/jasonlabz/cartl/common/consts"
 	"github.com/jasonlabz/cartl/common/times"
 	"github.com/jasonlabz/cartl/common/utils"
@@ -24,6 +24,7 @@ var (
 type Options struct {
 	writeFile  bool
 	logFormat  string
+	name       string   // 应用名
 	configPath string   // 日志配置文件
 	keyList    []string // 自定义context中需要打印的Field字段
 	logLevel   string   // 日志级别
@@ -37,6 +38,11 @@ type Options struct {
 
 type Option func(o *Options)
 
+func WithName(name string) Option {
+	return func(o *Options) {
+		o.name = name
+	}
+}
 func WithLevel(level string) Option {
 	return func(o *Options) {
 		o.logLevel = level
@@ -83,19 +89,19 @@ func InitLogger(opts ...Option) *LoggerWrapper {
 	// 读取zap配置文件
 	var configLoad bool
 	if !configLoad && options.configPath != "" && utils.IsExist(options.configPath) {
-		provider := yaml.NewConfigProvider(options.configPath)
+		provider := file.NewConfigProvider(options.configPath)
 		util.AddProviders(DefaultZapConfigName, provider)
 		configLoad = true
 	}
 
 	if !configLoad && utils.IsExist(consts.DefaultConfigPath) {
-		provider := yaml.NewConfigProvider(consts.DefaultConfigPath)
+		provider := file.NewConfigProvider(consts.DefaultConfigPath)
 		util.AddProviders(DefaultZapConfigName, provider)
 		configLoad = true
 	}
 
 	if !configLoad && utils.IsExist(DefaultZapConfigPathBak) {
-		provider := yaml.NewConfigProvider(DefaultZapConfigPathBak)
+		provider := file.NewConfigProvider(DefaultZapConfigPathBak)
 		util.AddProviders(DefaultZapConfigName, provider)
 		configLoad = true
 	}
@@ -172,7 +178,7 @@ func getEncoder(options *Options) zapcore.Encoder {
 	//自定义编码配置
 	encoderConfig := zap.NewProductionEncoderConfig()
 	//encoderConfig := zap.NewDevelopmentEncoderConfig()
-	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(times.MicroTimeFormat) //指定时间格式
+	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(times.MilliTimeFormat) //指定时间格式
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder                       //在日志文件中使用大写字母记录日志级别
 	//encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder //按级别显示不同颜色，不需要的话取值zapcore.CapitalLevelEncoder就可以了
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder //显示短文件路径
@@ -214,8 +220,8 @@ func loadConf(options *Options) {
 	defaultOptions := Options{
 		writeFile:  false,
 		logFormat:  "console",
-		configPath: "./conf/app.yaml",
-		keyList:    []string{consts.ContextTraceID, consts.ContextUserID},
+		configPath: "./conf/logger.yaml",
+		keyList:    []string{consts.ContextLOGID, consts.ContextTraceID, consts.ContextUserID},
 		logLevel:   "info",
 		basePath:   "./log",
 		fileName:   "app.log",
@@ -263,5 +269,9 @@ func loadConf(options *Options) {
 
 	if len(options.keyList) == 0 {
 		options.keyList = defaultOptions.keyList
+	}
+
+	if options.name != "" {
+		options.basePath = filepath.Join(options.basePath, options.name)
 	}
 }

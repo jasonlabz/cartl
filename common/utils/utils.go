@@ -43,7 +43,7 @@ func GetString(key any) string {
 		resByte := key.([]byte)
 		return string(resByte)
 	case time.Time:
-		return key.(time.Time).String()
+		return key.(time.Time).Format(time.DateTime)
 	default:
 		bytes, err := sonic.Marshal(key)
 		if err != nil {
@@ -250,4 +250,17 @@ func IsTrueOrNot[T any](express bool, firstVal, secondVal T) T {
 		return firstVal
 	}
 	return secondVal
+}
+
+func QuotaName(origin string) string {
+	hasPrefix := strings.HasPrefix(origin, "\"")
+	hasSuffix := strings.HasSuffix(origin, "\"")
+
+	if hasPrefix && !hasSuffix {
+		return origin + "\""
+	} else if !hasPrefix && hasSuffix {
+		return "\"" + origin
+	} else {
+		return fmt.Sprintf("\"%s\"", origin)
+	}
 }

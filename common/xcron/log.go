@@ -9,7 +9,7 @@ import (
 var defaultLogger *cronLogger
 
 func init() {
-	zapLogger := log.InitLogger(log.WithBasePath("cron"), log.WithBasePath("cron"), log.WithFileName("cron.log"))
+	zapLogger := log.InitLogger(log.WithBasePath("cron"), log.WithFileName("cron.log"))
 	defaultLogger = &cronLogger{
 		zapLogger,
 	}

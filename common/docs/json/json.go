@@ -34,3 +34,11 @@ func LoadJSONFromString(s string) (*jsonquery.Node, error) {
 	}
 	return doc, nil
 }
+
+func Query(doc *jsonquery.Node, expr string) ([]*jsonquery.Node, error) {
+	return jsonquery.QueryAll(doc, expr)
+}
+
+func QueryOne(doc *jsonquery.Node, expr string) (*jsonquery.Node, error) {
+	return jsonquery.Query(doc, expr)
+}
