@@ -21,15 +21,15 @@ func Now() time.Time {
 	return time.Now().In(time.Local)
 }
 
-func FormatTime(t time.Time) string {
+func Format2Time(t time.Time) string {
 	return Format(t, TimeFormat)
 }
 
-func FormatDate(t time.Time) string {
+func Format2Date(t time.Time) string {
 	return Format(t, DateFormat)
 }
 
-func FormatDateTime(t time.Time) string {
+func Format2DateTime(t time.Time) string {
 	return Format(t, DateTimeFormat)
 }
 
@@ -38,7 +38,7 @@ func Format(t time.Time, format string) string {
 }
 
 func CurrentTime() string {
-	return FormatDateTime(Now())
+	return Format2DateTime(Now())
 }
 
 func CurrentTimeMillis() int64 {

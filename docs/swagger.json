@@ -1,0 +1,32 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "封装ETL处理逻辑，降低数据治理门槛",
+        "title": "ETL计算引擎服务",
+        "contact": {
+            "name": "lucas",
+            "url": "http://www.swagger.io/support",
+            "email": "1783022886@qq.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/lg_server/api",
+    "paths": {
+        "/health-check": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "健康检查"
+                ],
+                "summary": "健康检查",
+                "responses": {}
+            }
+        }
+    }
+}

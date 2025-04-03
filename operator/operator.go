@@ -17,7 +17,7 @@ const (
 	DATE   DataType = "date"
 	BOOL   DataType = "bool"
 	STRING DataType = "string"
-	BYTE   DataType = "byte"
+	BYTES  DataType = "[]byte"
 	DOUBLE DataType = "float64"
 	FLOAT  DataType = "float32"
 )
