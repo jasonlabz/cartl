@@ -1,18 +1,21 @@
 package routers
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	knife4go "github.com/jasonlabz/knife4go"
-	"github.com/jasonlabz/potato/core/config"
+	"github.com/jasonlabz/potato/configx"
+	"github.com/jasonlabz/potato/middleware"
 
-	_ "github.com/jasonlabz/cartl/docs"
+	_ "github.com/jasonlabz/cartl/docs/swagger"
 	"github.com/jasonlabz/cartl/server/controller"
-	"github.com/jasonlabz/cartl/server/middleware"
 )
 
 // InitApiRouter 封装路由
 func InitApiRouter() *gin.Engine {
-	router := gin.Default()
+	router := gin.New()
+	serverConfig := configx.GetConfig()
 
 	// 全局中间件，查看定义的中间价在middlewares文件夹中
 	rootMiddleware(router)
@@ -21,28 +24,27 @@ func InitApiRouter() *gin.Engine {
 
 	// 对路由进行分组，处理不同的分组，根据自己的需求定义即可
 	staticRouter := router.Group("/server")
-	staticRouter.Static("/", "application")
+	staticRouter.Static("/", "webroot")
 
-	serverGroup := router.Group("/lg_server")
-	//debug模式下，注册swagger路由
-	//knife4go: beautify swagger-ui http://ip:port/lg_server/doc.html
-	// knife4go: beautify swagger-ui,
-	serverConfig := config.GetConfig()
-	if serverConfig.Debug {
+	serverGroup := router.Group(fmt.Sprintf("/%s", serverConfig.GetName()))
+	// debug模式下，注册swagger路由
+	// knife4go: beautify swagger-ui, http://ip:port/server_name/doc.html
+	if serverConfig.IsDebugMode() {
 		_ = knife4go.InitSwaggerKnife(serverGroup)
 	}
 
+	// base api
+	registerBaseAPI(serverGroup)
+
 	apiGroup := serverGroup.Group("/api")
 
-	// base api
-	registerBaseAPI(apiGroup)
-
 	// 中间件拦截器
-	groupMiddleware(apiGroup, middleware.SetContext(), middleware.RequestMiddleware())
+	groupMiddleware(apiGroup,
+		middleware.RecoveryLog(true), middleware.SetContext(), middleware.RequestMiddleware())
 
 	// v1 group api
-	v1 := apiGroup.Group("/v1")
-	registerV1GroupAPI(v1)
+	v1Group := apiGroup.Group("/v1")
+	registerV1GroupAPI(v1Group)
 
 	return router
 }
@@ -55,30 +57,15 @@ func groupMiddleware(g *gin.RouterGroup, middlewares ...gin.HandlerFunc) {
 	g.Use(middlewares...)
 }
 
-func FileServer() (err error) {
-	// 文件服务
-	//err = http.ListenAndServe(":8001", http.FileServer(http.Dir("/root/files")))
-	return
-}
-
-// TODO:注册根路由  http://ip:port/**
+// 注册根路由  http://ip:port/**
 func registerRootAPI(router *gin.Engine) {
-	if router == nil {
-		return
-	}
-}
-
-// TODO:注册服務路由  http://ip:port/server_name/**
-func registerBaseAPI(router *gin.RouterGroup) {
-	if router == nil {
-		return
-	}
 	router.GET("/health-check", controller.HealthCheck)
 }
 
-// TODO:注册組路由 http://ip:port/server_name/group_name/**
-func registerV1GroupAPI(v1Group *gin.RouterGroup) {
-	if v1Group == nil {
-		return
-	}
+// 注册服務路由  http://ip:port/server_name/api/**
+func registerBaseAPI(router *gin.RouterGroup) {}
+
+// 注册組路由 http://ip:port/server_name/api/v1/**
+func registerV1GroupAPI(router *gin.RouterGroup) {
+	// v1.RegisterSchedulerManagerGroup(router)
 }

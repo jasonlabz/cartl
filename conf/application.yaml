@@ -1,63 +1,141 @@
 application:
-  name: lg_server
-  port: 8630
-  prom:
-    enable: true      # Enable prometheus client
-    path: "metrics"   # Default value is "metrics", set path as needed.
-  pprof:
-    enable: true  # Enable PProf tool
-    port: 8080
-debug: true
-kafka:
-  topic: ["XXX"]
-  group_id: "XXX"
-  bootstrap_servers: "XXX:XX,XXX:XX,XXX:XX"
-  security_protocol: "PLAINTEXT"
-  sasl_mechanism: "PLAIN"
-  sasl_username: "XXX"
-  sasl_password: "XXX"
-database:
-  db_type: "mysql"
+  name: cartl    # 应用名
+  debug: true        # 调试模式
+  server:
+    http:
+      enable: true
+      port: 8080
+      read_timeout: 30s    # 添加超时配置
+      write_timeout: 30s
+    grpc:
+      enable: false
+      port: 8082
+      max_concurrent_streams: 100
+    static:
+      enable: false
+      port: 8081
+      path: ""
+  monitor:
+    prometheus:
+      enable: false      # Enable prometheus client
+      path: "metrics"   # Default value is "metrics", set path as needed.
+      scrape_interval: "15s"  # 添加采集间隔
+    pprof:
+      enable: false  # Enable PProf tool
+      port: 8080
+      enabled_endpoints: ["goroutine", "heap"]  # 指定启用的端点
+datasource:
+  enable: false
+  strict: false
+  db_type: "postgres"
+  host: "127.0.0.1"
+  port: 5432
+  username: postgres
+  password: "******"
+  database: mydb
+  # Connection 内嵌字段（由于 mapstructure:",squash" 被拍平）
   dsn: ""
-#  dsn: "user=postgres password= host=127.0.0.1 port=8432 dbname= sslmode=disable TimeZone=Asia/Shanghai"
-  charset: "utf-8"
+#  masters:
+#    - dsn: ""
+#      host: ""
+#      port: 0
+#      username: ""
+#      password: ""
+#      database: ""
+#  replicas:
+#    - dsn: ""
+#      host: ""
+#      port: 0
+#      username: ""
+#      password: ""
+#      database: ""
+  args:
+    - name: sslmode
+      value: disable
+    - name: TimeZone
+      value: Asia/Shanghai
+  charset: ""
   log_mode: "info"
   max_idle_conn: 10
   max_open_conn: 100
+  conn_max_idle_time: 1000
+  conn_max_life_time: 1000
+
 redis:
+  enable: false
+  strict: true
   endpoints:
-    - ""
-  password: ""
+    - "127.0.0.1:6379"
+  password: "******"
   index_db: 0
-  MinIdleConns: 10
+  min_idle_conns: 10
   max_idle_conns: 50
-  max_active_conns: 10
+  max_active_conns: 100
   max_retry_times: 5
-  master_name:
-  sentinel_username:
-  sentinel_password:
+
 rabbitmq:
-  host:
-  port: 8672
-  username: lucas
-  password:
+  enable: false
+  strict: true
+  host: "127.0.0.1"
+  port: 5672
+  username: guest
+  password: "******"
+  limit_conf:
+    attempt_times: 3
+    retry_wait_time: 3000
+    prefetch_count: 100
+    timeout: 5000
+
+kafka:
+  enable: false
+  strict: true
+  topic: ["my-topic"]
+  group_id: "my-group"
+  bootstrap_servers: ["127.0.0.1:9092"]
+  security_protocol: "PLAINTEXT"
+  sasl_mechanism: "PLAIN"
+
+rocketmq:
+  enable: false
+  strict: true
+  name_servers: ["127.0.0.1:9876"]
+  group_name: "my-group"
+  access_key: "ak"
+  secret_key: "sk"
+
+es:
+  enable: false
+  strict: true
+  endpoints: ["127.0.0.1:9200"]
+  username: elastic
+  password: "******"
+  is_https: false
+  insecure_skip_verify: false
+
+mongodb:
+  enable: false
+  strict: true
+  host: "127.0.0.1"
+  port: 27017
+  username: admin
+  password: "******"
+  max_pool_size: 100
+
+obs:
+  enable: false
+  strict: false
+  name: "minio-dev"                                     # client name, for multi-client lookup
+  endpoint: "127.0.0.1:9000"                            # MinIO / OBS / S3-compatible endpoint
+  region: "us-east-1"
+  access_key: "minioadmin"
+  secret_key: "minioadmin"
+  bucket: "my-bucket"
+  insecure_skip_verify: true                             # true when using HTTP or self-signed cert
+  max_retries: 3
+  timeout: 30                                            # seconds
+
 crypto:
   - type: aes
-    key: ""
+    key: "0123456789abcdef"
   - type: des
-    key: ""
-log:
-  # 是否写入文件
-  write_file: true
-  # json|console
-  format: console
-  # error|warn|info|debug|fatal
-  log_level: debug
-  # 文件配置
-  log_file_conf:
-    base_path: ./log
-    file_name: cartl.log
-    max_size: 10
-    max_age: 28
-    max_backups: 100
-    compress: false
+    key: "des-key8"

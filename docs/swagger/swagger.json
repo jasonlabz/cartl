@@ -1,0 +1,324 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "TODO: 旨在***********",
+        "title": "TODO: ***********服务",
+        "contact": {
+            "name": "TODO: your name",
+            "url": "TODO: http://www.*****.io/support",
+            "email": "TODO: mail_name@qq.com"
+        },
+        "version": "1.0"
+    },
+    "host": "TODO: localhost:port",
+    "basePath": "TODO: /base_path",
+    "paths": {
+        "/health-check": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "健康检查"
+                ],
+                "summary": "健康检查",
+                "responses": {}
+            }
+        },
+        "/v1/user/info": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关接口"
+                ],
+                "summary": "用户信息编辑",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "update_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body.UserUpdateFieldDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/ginx.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/info/{user_id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关接口"
+                ],
+                "summary": "查询用户详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/ginx.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/body.UserInfoDto"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关接口"
+                ],
+                "summary": "用户注销删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "0|1 登录|登出",
+                        "name": "status",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/ginx.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/log_in_out/{user_id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关接口"
+                ],
+                "summary": "用户登录\u0026登出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "0|1 登录|登出",
+                        "name": "status",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/ginx.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/register": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户相关接口"
+                ],
+                "summary": "用户注册",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "user_info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body.UserRegisterDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/ginx.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "body.UserInfoDto": {
+            "type": "object",
+            "properties": {
+                "gender": {
+                    "description": "Comment: 性别 0|男、1|女、9|未知",
+                    "type": "integer"
+                },
+                "phone": {
+                    "description": "Comment: 手机号",
+                    "type": "string"
+                },
+                "register_ip": {
+                    "description": "Comment: no comment",
+                    "type": "string"
+                },
+                "register_time": {
+                    "description": "Comment: no comment",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "Comment: 用户ID",
+                    "type": "integer"
+                },
+                "user_name": {
+                    "description": "Comment: 用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "body.UserRegisterDto": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "Comment: 头像",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "Comment: 性别 0|男、1|女、9|未知",
+                    "type": "integer"
+                },
+                "nickname": {
+                    "description": "Comment: 用户名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Comment: 用户密码 des/md5加密值",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Comment: 手机号 aes加密",
+                    "type": "string"
+                }
+            }
+        },
+        "body.UserUpdateFieldDto": {
+            "type": "object",
+            "properties": {
+                "gender": {
+                    "description": "Comment: 性别 0|男、1|女、9|未知",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "Comment: 密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Comment: 手机号",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "Comment: 用户ID",
+                    "type": "integer"
+                },
+                "user_name": {
+                    "description": "Comment: 用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "ginx.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "错误码",
+                    "type": "integer"
+                },
+                "current_time": {
+                    "description": "接口返回时间（当前时间）",
+                    "type": "string"
+                },
+                "data": {
+                    "description": "返回数据"
+                },
+                "err_trace": {
+                    "description": "错误追踪链路信息",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "错误信息",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "版本信息",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

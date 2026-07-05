@@ -1,0 +1,216 @@
+basePath: 'TODO: /base_path'
+definitions:
+  body.UserInfoDto:
+    properties:
+      gender:
+        description: 'Comment: 性别 0|男、1|女、9|未知'
+        type: integer
+      phone:
+        description: 'Comment: 手机号'
+        type: string
+      register_ip:
+        description: 'Comment: no comment'
+        type: string
+      register_time:
+        description: 'Comment: no comment'
+        type: string
+      user_id:
+        description: 'Comment: 用户ID'
+        type: integer
+      user_name:
+        description: 'Comment: 用户名'
+        type: string
+    type: object
+  body.UserRegisterDto:
+    properties:
+      avatar:
+        description: 'Comment: 头像'
+        type: string
+      gender:
+        description: 'Comment: 性别 0|男、1|女、9|未知'
+        type: integer
+      nickname:
+        description: 'Comment: 用户名'
+        type: string
+      password:
+        description: 'Comment: 用户密码 des/md5加密值'
+        type: string
+      phone:
+        description: 'Comment: 手机号 aes加密'
+        type: string
+    type: object
+  body.UserUpdateFieldDto:
+    properties:
+      gender:
+        description: 'Comment: 性别 0|男、1|女、9|未知'
+        type: integer
+      password:
+        description: 'Comment: 密码'
+        type: string
+      phone:
+        description: 'Comment: 手机号'
+        type: string
+      user_id:
+        description: 'Comment: 用户ID'
+        type: integer
+      user_name:
+        description: 'Comment: 用户名'
+        type: string
+    type: object
+  ginx.Response:
+    properties:
+      code:
+        description: 错误码
+        type: integer
+      current_time:
+        description: 接口返回时间（当前时间）
+        type: string
+      data:
+        description: 返回数据
+      err_trace:
+        description: 错误追踪链路信息
+        type: string
+      message:
+        description: 错误信息
+        type: string
+      version:
+        description: 版本信息
+        type: string
+    type: object
+host: 'TODO: localhost:port'
+info:
+  contact:
+    email: 'TODO: mail_name@qq.com'
+    name: 'TODO: your name'
+    url: 'TODO: http://www.*****.io/support'
+  description: 'TODO: 旨在***********'
+  title: 'TODO: ***********服务'
+  version: "1.0"
+paths:
+  /health-check:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: 健康检查
+      tags:
+      - 健康检查
+  /v1/user/info:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户信息
+        in: body
+        name: update_info
+        required: true
+        schema:
+          $ref: '#/definitions/body.UserUpdateFieldDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/ginx.Response'
+      summary: 用户信息编辑
+      tags:
+      - 用户相关接口
+  /v1/user/info/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: 0|1 登录|登出
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/ginx.Response'
+      summary: 用户注销删除
+      tags:
+      - 用户相关接口
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/ginx.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/body.UserInfoDto'
+              type: object
+      summary: 查询用户详情
+      tags:
+      - 用户相关接口
+  /v1/user/log_in_out/{user_id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: 0|1 登录|登出
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/ginx.Response'
+      summary: 用户登录&登出
+      tags:
+      - 用户相关接口
+  /v1/user/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户信息
+        in: body
+        name: user_info
+        required: true
+        schema:
+          $ref: '#/definitions/body.UserRegisterDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/ginx.Response'
+      summary: 用户注册
+      tags:
+      - 用户相关接口
+swagger: "2.0"

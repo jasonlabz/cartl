@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"github.com/jasonlabz/potato/core/consts"
+	"github.com/jasonlabz/potato/consts"
 )
 
 type Options struct {
@@ -28,7 +28,7 @@ func WithCustomField(customFieldMap map[string]func(ctx *gin.Context) string) Op
 	}
 }
 
-func SetContextMiddleWare(opts ...Option) gin.HandlerFunc {
+func SetContextMiddleware(opts ...Option) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var options = &Options{}
 		for _, opt := range opts {

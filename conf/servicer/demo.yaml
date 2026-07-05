@@ -1,0 +1,26 @@
+# service名
+Name: demo
+# 调试模式 true|false
+Debug: false
+# 连接协议 http|https
+Protocol: http
+# 重试次数
+RetryCount: 3
+# 重试等待时间 单位：毫秒
+RetryWaitTime: 1000
+# 请求超时时间 单位：毫秒
+Timeout: 5000
+# service ip地址
+Host: 127.0.0.1
+# service 端口
+Port: 8080
+# service basepath
+BasePath: /
+# 客户端证书, 例如："certs/client.pem"
+CertFile:
+# 客户端证书, 例如："certs/client.key"
+KeyFile:
+# 根证书, 例如："/path/to/root/pemFile.pem"
+RootCertFile:
+# 跳过证书认证，生产应为false
+InsecureSkipVerify: false

@@ -2,9 +2,10 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jasonlabz/cartl/common/consts"
+	"github.com/jasonlabz/potato/consts"
 
 	base "github.com/jasonlabz/cartl/common/ginx"
+	"github.com/jasonlabz/cartl/server/service/health_check"
 )
 
 // HealthCheck 健康检查
@@ -15,5 +16,6 @@ import (
 //	@Produce	json
 //	@Router		/health-check [get]
 func HealthCheck(c *gin.Context) {
-	base.JsonResult(c, consts.APIVersionV1, "success", nil)
+	status := health_check.GetService().DoCheck(c)
+	base.JsonResult(c, consts.APIVersionV1, status, nil)
 }

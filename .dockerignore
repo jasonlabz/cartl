@@ -1,0 +1,10 @@
+.git
+bin
+coverage.out
+log
+node_modules
+output
+web/dist
+web/node_modules
+webroot
+

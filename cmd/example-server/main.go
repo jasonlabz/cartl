@@ -86,7 +86,7 @@ func main() {
 	log.Println("Shutdown Server ...")
 	cancel()
 
-	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancelShutdown()
 
 	if fileSrv != nil {
@@ -119,7 +119,7 @@ func main() {
 	if grpcLis != nil {
 		_ = grpcLis.Close()
 	}
-	log.Println("Server exiting")
+	log.Println("Server exit")
 }
 
 // startHTTPServer 自定义http配置

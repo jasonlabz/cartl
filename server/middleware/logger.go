@@ -8,14 +8,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/jasonlabz/potato/core/consts"
-	"github.com/jasonlabz/potato/core/utils"
+	"github.com/jasonlabz/potato/consts"
 	"github.com/jasonlabz/potato/log"
+	"github.com/jasonlabz/potato/utils"
+
+	"github.com/jasonlabz/cartl/global/resource"
 )
 
 const (
-	requestBodyMaxLen = 20480
+	requestBodyMaxLen = 204800
 )
 
 type BodyLog struct {
@@ -38,13 +39,12 @@ func (bl BodyLog) WriteHeader(statusCode int) {
 
 func RequestMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		traceID := utils.GetString(c.Value(consts.ContextTraceID))
+		traceID := utils.StringValue(c.Value(consts.ContextTraceID))
 		if traceID != "" {
 			c.Writer.Header().Set(consts.HeaderRequestID, traceID)
 		}
 
 		var requestBodyBytes []byte
-		var requestBodyLogBytes []byte
 		if c.Request.Body != nil {
 			requestBodyBytes, _ = io.ReadAll(c.Request.Body)
 		}
@@ -52,33 +52,37 @@ func RequestMiddleware() gin.HandlerFunc {
 		bodyLog := &BodyLog{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = bodyLog
 
-		maxLen := len(requestBodyBytes)
-		if maxLen > requestBodyMaxLen {
-			maxLen = requestBodyMaxLen
-		}
-		requestBodyLogBytes = make([]byte, maxLen)
-		copy(requestBodyLogBytes, requestBodyBytes)
-		if maxLen < len(requestBodyBytes) {
-			requestBodyLogBytes = append(requestBodyLogBytes, []byte("......")...)
-		}
-
-		logger := log.GetLogger(c)
 		start := time.Now() // Start timer
-
-		logger.Info("[GIN] request",
-			"method", c.Request.Method,
-			"agent", c.Request.UserAgent(),
-			"body", string(requestBodyLogBytes),
-			"client_ip", c.ClientIP(),
-			"path", c.Request.URL.RawPath)
+		resource.Logger.Info(c, "	[GIN] request",
+			log.String("proto", c.Request.Proto),
+			log.String("client_ip", c.ClientIP()),
+			log.Int64("content_length", c.Request.ContentLength),
+			log.String("agent", c.Request.UserAgent()),
+			log.String("request_body", string(logBytes(requestBodyBytes, requestBodyMaxLen))),
+			log.String("method", c.Request.Method),
+			log.String("path", c.Request.URL.Path))
 
 		c.Next()
 
-		logger.Info("[GIN] response",
-			"error_message", c.Errors.ByType(gin.ErrorTypePrivate).String(),
-			"body", bodyLog.body.String(),
-			"path", c.Request.URL.RawPath,
-			"status_code", c.Writer.Status(),
-			"cost", fmt.Sprintf("%dms", time.Now().Sub(start).Milliseconds()))
+		resource.Logger.Info(c, "	[GIN] response",
+			log.Int("status_code", c.Writer.Status()),
+			log.String("error_message", c.Errors.ByType(gin.ErrorTypePrivate).String()),
+			log.String("response_body", string(logBytes(bodyLog.body.Bytes(), requestBodyMaxLen))),
+			log.String("path", c.Request.URL.Path),
+			log.String("cost", fmt.Sprintf("%dms", time.Since(start).Milliseconds())))
 	}
+}
+
+func logBytes(src []byte, maxLen int) []byte {
+	srcLen := len(src)
+	length := srcLen
+	if maxLen > 0 && srcLen > maxLen {
+		length = maxLen
+	}
+	requestBodyLogBytes := make([]byte, length)
+	copy(requestBodyLogBytes, src)
+	if length < srcLen {
+		requestBodyLogBytes = append(requestBodyLogBytes, []byte(" ......")...)
+	}
+	return requestBodyLogBytes
 }
