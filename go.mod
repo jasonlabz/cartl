@@ -8,6 +8,7 @@ require (
 	github.com/jasonlabz/knife4go v1.0.1-0.20241118142759-6386e3973279
 	github.com/jasonlabz/potato v1.0.10-0.20260526144952-92b3ea31774d
 	google.golang.org/grpc v1.81.0
+	gorm.io/gorm v1.26.0
 )
 
 require (
@@ -132,7 +133,6 @@ require (
 	gorm.io/driver/mysql v1.5.7 // indirect
 	gorm.io/driver/postgres v1.5.9 // indirect
 	gorm.io/driver/sqlserver v1.5.3 // indirect
-	gorm.io/gorm v1.26.0 // indirect
 	gorm.io/plugin/dbresolver v1.6.2 // indirect
 	modernc.org/libc v1.22.5 // indirect
 	modernc.org/mathutil v1.5.0 // indirect

@@ -27,8 +27,14 @@ func MustInit(ctx context.Context) {
 	initResource(ctx)
 	// 初始化加解秘钥
 	initCrypto(ctx)
+	// 确保数据库存在（不存在则创建）
+	ensureDB(ctx)
 	// 初始化DB
 	initDB(ctx)
+	// 自动执行数据库迁移（DDL）
+	runMigrations(ctx)
+	// 自动执行种子数据（DDL 完成后）
+	runSeed(ctx)
 	// 初始化RMQ
 	initRMQ(ctx)
 	// 初始化Redis
