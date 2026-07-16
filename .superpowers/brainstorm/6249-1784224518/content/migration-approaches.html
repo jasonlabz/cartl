@@ -1,0 +1,33 @@
+<h2>Dagine 全量 React 迁移：实施路径</h2>
+<p class="subtitle">目标不变：所有原路由、业务交互、后端 API 契约与视觉效果都迁入 <code>cartl</code>。选择的是交付节奏，不是功能范围。</p>
+
+<div class="section">
+  <div class="mockup">
+    <div class="mockup-header">迁移范围（全部保留）</div>
+    <div class="mockup-body" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:18px">
+      <div class="placeholder"><strong>基础能力</strong><br><small>登录、注册、找回密码、403/404/500、鉴权、布局、主题、搜索</small></div>
+      <div class="placeholder"><strong>标准管理</strong><br><small>组织、值域、元数据及详情、版本</small></div>
+      <div class="placeholder"><strong>工作流</strong><br><small>数据源、资产仓库、算子、数据流、画布、任务、调度</small></div>
+      <div class="placeholder"><strong>质量管理</strong><br><small>规则、方案、报告、问题工单</small></div>
+      <div class="placeholder"><strong>数据视图</strong><br><small>目录、探查、血缘、对比</small></div>
+      <div class="placeholder"><strong>后端对接</strong><br><small>沿用现有 /api 代理、令牌、响应与错误语义</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="incremental" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:linear-gradient(135deg,#edf4ff,#f8faff)"><div class="mock-nav">基础能力 → 标准管理 → 工作流 → 质量 → 数据视图</div></div>
+    <div class="card-body"><h3>A · 分域增量迁移（推荐）</h3><p>先建共享壳与 API 层，再以业务域为单位逐个迁入、逐个进行视觉和交互回归；保留全量完成标准。</p></div>
+  </div>
+  <div class="card" data-choice="bigbang" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:linear-gradient(135deg,#fff4eb,#fffaf5)"><div class="mock-nav">所有页面并行重写 → 集中联调 → 一次性交付</div></div>
+    <div class="card-body"><h3>B · 集中式重写</h3><p>视觉样式可能更早统一，但共享模式和 API 假设会在后期集中暴露，返工风险最高。</p></div>
+  </div>
+  <div class="card" data-choice="embed" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:linear-gradient(135deg,#f5f0ff,#fbf9ff)"><div class="mock-nav">React 壳 → Vue iframe/微前端 → 逐页替换</div></div>
+    <div class="card-body"><h3>C · 临时嵌入旧系统</h3><p>短期切换快，但路由、主题、认证和视觉一致性会双重维护；不符合“React 重构”的最终目标。</p></div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px">建议选择 A：它将视觉回归和真实 API 联调置于每个业务域完成时，避免把风险集中到最后。</p>

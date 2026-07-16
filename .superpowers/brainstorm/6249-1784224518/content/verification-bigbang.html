@@ -1,0 +1,40 @@
+<h2>设计第 3 节：集中式交付的验证与视觉回归</h2>
+<p class="subtitle">B 路径不分批发布，但不能把正确性全部延后。纯逻辑先有测试，最终以原站 <code>9527</code> 和 React <code>5173</code> 的同环境对照作为发布门槛。</p>
+
+<div class="mockup">
+  <div class="mockup-header">最终验证漏斗</div>
+  <div class="mockup-body" style="padding:22px;display:grid;gap:16px">
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+      <div class="placeholder" style="background:#f4f8ff"><strong>1 · 单元</strong><br><small>响应规范化、令牌刷新、角色过滤、分页、Flow adapter 与 payload builder</small></div>
+      <div class="placeholder" style="background:#f4f8ff"><strong>2 · 组件</strong><br><small>筛选分页、Form 校验、抽屉重置、错误态、核心画布操作</small></div>
+      <div class="placeholder" style="background:#f4f8ff"><strong>3 · 路由/API</strong><br><small>全部路由可达、认证跳转、参数回填、真实接口成功与失败分支</small></div>
+      <div class="placeholder" style="background:#f4f8ff"><strong>4 · 浏览器</strong><br><small>原 Vue 与 React 同路由、同数据、同视口的视觉和交互对照</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>视觉验收矩阵</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding:0;overflow:auto">
+      <table style="width:100%;border-collapse:collapse;text-align:left">
+        <thead><tr style="background:#f6f8fb"><th style="padding:12px">范围</th><th style="padding:12px">1440</th><th style="padding:12px">1280</th><th style="padding:12px">768</th><th style="padding:12px">390</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:12px;border-top:1px solid #e8edf4">登录、错误、应用壳</td><td style="padding:12px;border-top:1px solid #e8edf4">逐页</td><td style="padding:12px;border-top:1px solid #e8edf4">逐页</td><td style="padding:12px;border-top:1px solid #e8edf4">逐页</td><td style="padding:12px;border-top:1px solid #e8edf4">逐页</td></tr>
+          <tr><td style="padding:12px;border-top:1px solid #e8edf4">标准、质量、数据视图</td><td style="padding:12px;border-top:1px solid #e8edf4">全部路由</td><td style="padding:12px;border-top:1px solid #e8edf4">代表表格/详情</td><td style="padding:12px;border-top:1px solid #e8edf4">代表表格/抽屉</td><td style="padding:12px;border-top:1px solid #e8edf4">关键操作</td></tr>
+          <tr><td style="padding:12px;border-top:1px solid #e8edf4">工作流、图表和画布</td><td style="padding:12px;border-top:1px solid #e8edf4">列表与工作台</td><td style="padding:12px;border-top:1px solid #e8edf4">列表与工作台</td><td style="padding:12px;border-top:1px solid #e8edf4">侧栏/面板收起</td><td style="padding:12px;border-top:1px solid #e8edf4">关键操作可达</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>每个页面必须验证的状态</h3>
+  <div class="pros-cons">
+    <div class="pros"><h4>通用状态</h4><ul><li>首次加载、数据、空数据、网络/后端错误、无权限</li><li>搜索、筛选、分页、排序、刷新和跳转参数</li><li>主题、布局收起/展开、键盘与焦点可达性</li></ul></div>
+    <div class="cons"><h4>变更状态</h4><ul><li>新建、编辑、删除、发布、修订、导入/导出后的反馈与刷新</li><li>令牌刷新、强制登出和登录后回跳</li><li>画布拖拽、连线、删除、配置、保存、重载与冲突提示</li></ul></div>
+  </div>
+</div>
+
+<p class="subtitle">为此会在 <code>cartl</code> 增加 Vitest + React Testing Library，用于可重复的逻辑和组件测试；浏览器对照在本地运行中保存为验证证据，不改动源 Vue 工程。</p>

@@ -1,0 +1,37 @@
+<h2>设计第 1 节：React 应用架构与等价边界</h2>
+<p class="subtitle">采用集中式重写：先完成所有生产页面与共享能力，再进入一轮统一的 API、权限、视觉和交互回归。</p>
+
+<div class="mockup">
+  <div class="mockup-header">cartl / src</div>
+  <div class="mockup-body" style="padding:20px;display:grid;gap:14px">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+      <div class="placeholder" style="border-color:#b9c9ff"><strong>app</strong><br><small>Provider、错误边界、主题、全局反馈</small></div>
+      <div class="placeholder" style="border-color:#b9c9ff"><strong>routes</strong><br><small>路由表、鉴权守卫、菜单元数据、404</small></div>
+      <div class="placeholder" style="border-color:#b9c9ff"><strong>layouts</strong><br><small>登录空白页、后台壳、侧栏、头部、标签页</small></div>
+    </div>
+    <div aria-hidden="true" style="height:18px;border-left:2px solid #9eb4fb;margin:0 auto"></div>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
+      <div class="placeholder"><strong>pages/auth</strong><br><small>登录 / 注册 / 重置</small></div>
+      <div class="placeholder"><strong>pages/standards</strong><br><small>组织、值域、元数据</small></div>
+      <div class="placeholder"><strong>pages/workflow</strong><br><small>数据源、画布、任务、调度</small></div>
+      <div class="placeholder"><strong>pages/quality</strong><br><small>规则、方案、报告、工单</small></div>
+      <div class="placeholder"><strong>pages/data-view</strong><br><small>目录、探查、血缘、对比</small></div>
+    </div>
+    <div aria-hidden="true" style="height:18px;border-left:2px solid #9eb4fb;margin:0 auto"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+      <div class="placeholder" style="background:#f7f9fc"><strong>components</strong><br><small>表格、表单、详情、图表、画布部件</small></div>
+      <div class="placeholder" style="background:#f7f9fc"><strong>services + types</strong><br><small>axios、认证恢复、原接口与 DTO</small></div>
+      <div class="placeholder" style="background:#f7f9fc"><strong>styles + utils</strong><br><small>视觉 token、布局、请求/流程适配器</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>等价规则</h3>
+  <div class="pros-cons">
+    <div class="pros"><h4>必须保留</h4><ul><li>30 个可访问路由及详情/版本 URL 参数</li><li>原 API 路径、请求字段、分页、令牌刷新和业务错误语义</li><li>搜索、筛选、分页、编辑、发布、导入导出、画布编辑等可见交互</li><li>原 Vue 的后台信息密度、层级、响应式和状态反馈</li></ul></div>
+    <div class="cons"><h4>不会带入</h4><ul><li>Vue、Pinia、Naive UI 与原组件实现</li><li>无业务价值的框架兼容层</li><li>对后端契约、数据库和原 Vue 源码的修改</li><li>仅为未来猜测预留的抽象</li></ul></div>
+  </div>
+</div>
+
+<p class="subtitle">实现时使用 Ant Design 作为控件基线，保留现有 React Flow、Recharts、Lucide；视觉以原 Vue 页面为准而不是沿用当前原型的自定义数据。</p>

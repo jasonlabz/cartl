@@ -1,0 +1,39 @@
+<h2>设计第 2 节：请求数据流与页面组件边界</h2>
+<p class="subtitle">以原 Vue 的接口和行为为事实来源，在 React 中按同一路径组织路由、页面与 service，并用 Ant Design 复现列表、表单、抽屉和弹窗状态。</p>
+
+<div class="mockup">
+  <div class="mockup-header">统一请求路径</div>
+  <div class="mockup-body" style="padding:20px;display:grid;gap:12px">
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;text-align:center">
+      <div class="placeholder"><strong>页面</strong><br><small>独立 async 请求函数<br>仅最新请求更新状态</small></div>
+      <div class="placeholder"><strong>Service</strong><br><small><code>getXxxApi</code><br><code>createXxxApi</code></small></div>
+      <div class="placeholder"><strong>request</strong><br><small>axios 单例<br>Authorization 注入</small></div>
+      <div class="placeholder"><strong>响应规范化</strong><br><small>code + data<br>pagination → list/total</small></div>
+      <div class="placeholder"><strong>后端</strong><br><small>/auth<br>/api/v1/*<br>不改路径与字段</small></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
+      <div class="placeholder" style="background:#fff9ec"><strong>过期令牌</strong><br><small>单一 refresh Promise，重试原请求；失败则清理状态并跳转登录。</small></div>
+      <div class="placeholder" style="background:#fff9ec"><strong>全局失败反馈</strong><br><small>普通失败统一提示；弹窗登出码仅展示一次，避免重复通知。</small></div>
+      <div class="placeholder" style="background:#fff9ec"><strong>路由权限</strong><br><small>登录前拦截、角色过滤菜单与按钮；异常页保留原 URL。</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>按路径对齐的页面模式</h3>
+  <div class="cards">
+    <div class="card"><div class="card-body"><h3>表格页</h3><p>组织、规则、任务、报告、目录等使用 <code>tableParams</code>；筛选、排序和分页由一次状态更新触发请求。表格区域使用 <code>Spin</code>、Empty 与错误态。</p></div></div>
+    <div class="card"><div class="card-body"><h3>卡片与抽屉</h3><p>数据源、资产仓库、算子等使用 <code>listParams</code>、Row/Col、独立 Pagination；详情和编辑回填原有 Drawer/Modal 交互。</p></div></div>
+    <div class="card"><div class="card-body"><h3>表单与版本</h3><p>所有提交字段由 <code>Form.useForm()</code> 管理；弹窗关闭 reset + destroy，复杂标准详情分拆为业务子组件。</p></div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>工作流的专有边界</h3>
+  <div class="pros-cons">
+    <div class="pros"><h4>持久化模型</h4><ul><li><code>FlowDocument</code>：节点、边、全局配置、revision</li><li><code>WorkbenchState</code>：按节点/目标组织的后端工作台数据</li><li>保存、导入、导出、重置均使用原接口 payload</li></ul></div>
+    <div class="cons"><h4>画布 UI 模型</h4><ul><li>React Flow 的节点、边、选中和视口仅保存 UI 状态</li><li><code>flow-adapter</code> 负责双向转换、连线和数据校验</li><li>避免把 React Flow 状态直接当成后端请求体</li></ul></div>
+  </div>
+</div>
+
+<p class="subtitle">服务名称会采用 React 规范的 <code>xxxApi</code> 后缀，但所有 HTTP 方法、URL、参数、响应和错误码保持 Vue 现状。</p>
