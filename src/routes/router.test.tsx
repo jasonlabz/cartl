@@ -11,7 +11,7 @@ describe('AppRouter', () => {
 
     render(<AppRouter />);
 
-    expect(await screen.findByRole('heading', { name: '登录 Dagine' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '欢迎登录' })).toBeInTheDocument();
     expect(window.location.search).toContain('redirect=%2Fworkflow%2Fdata-source%3Fstatus%3Dactive');
   });
 });

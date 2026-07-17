@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { clearAuthStorage, getToken, setAuthTokens } from '@/utils/storage';
@@ -12,6 +12,7 @@ export interface AuthUser {
 }
 
 interface AuthContextValue {
+  initialized: boolean;
   isAuthenticated: boolean;
   login: (userName: string, password: string) => Promise<void>;
   logout: () => void;
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: PropsWithChildren) {
   const [token, setToken] = useState(getToken);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [initialized, setInitialized] = useState(() => !getToken());
 
   const logout = useCallback(() => {
     clearAuthStorage();
@@ -55,16 +57,46 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, [logout]);
 
-  const login = useCallback(async (userName: string, password: string): Promise<void> => {
-    const { refreshToken, token: nextToken } = await loginApi(userName, password);
+  useEffect(() => {
+    if (!token) {
+      setInitialized(true);
+      return;
+    }
+
+    let active = true;
+    void getUserInfoApi()
+      .then((nextUser) => {
+        if (active) setUser(nextUser);
+      })
+      .catch(() => {
+        if (active) logout();
+      })
+      .finally(() => {
+        if (active) setInitialized(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [logout, token]);
+
+  const login = useCallback(async (_userName: string, password: string): Promise<void> => {
+    const { refreshToken, token: nextToken } = await loginApi(_userName, password);
     setAuthTokens(nextToken, refreshToken);
     setToken(nextToken);
-    await refreshUser();
-  }, [refreshUser]);
+    try {
+      const nextUser = await getUserInfoApi();
+      setUser(nextUser);
+      setInitialized(true);
+    } catch (error) {
+      logout();
+      throw error;
+    }
+  }, [logout]);
 
   const value = useMemo(
-    () => ({ isAuthenticated: Boolean(token), login, logout, refreshUser, setSession, token, user }),
-    [login, logout, refreshUser, setSession, token, user]
+    () => ({ initialized, isAuthenticated: Boolean(token), login, logout, refreshUser, setSession, token, user }),
+    [initialized, login, logout, refreshUser, setSession, token, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

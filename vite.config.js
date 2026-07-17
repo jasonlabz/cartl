@@ -14,6 +14,11 @@ export default defineConfig({
             '/api': {
                 target: process.env.VITE_API_TARGET || 'http://127.0.0.1:8080',
                 changeOrigin: true
+            },
+            '/proxy-default': {
+                target: process.env.VITE_API_TARGET || 'http://127.0.0.1:8080/dashboard',
+                changeOrigin: true,
+                rewrite: function (path) { return path.replace(/^\/proxy-default/, ''); }
             }
         }
     },

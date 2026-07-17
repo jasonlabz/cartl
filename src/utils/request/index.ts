@@ -1,5 +1,6 @@
 import axios from 'axios';
-import type { AxiosRequestConfig, Method } from 'axios';
+import type { AxiosError, AxiosRequestConfig, Method } from 'axios';
+import { message, Modal } from 'antd';
 
 import { EXPIRED_TOKEN_CODES, LOGOUT_CODES, MODAL_LOGOUT_CODES, SUCCESS_CODE } from '@/constant/auth';
 import type { BaseResponse } from '@/types/api';
@@ -21,6 +22,7 @@ export interface BaseRequestOptions {
   getToken: () => string;
   onAuthExpired?: () => void;
   onBackendError?: (message: string) => void;
+  onModalLogout?: (message: string) => void;
   refreshToken: () => Promise<boolean>;
   transport: RequestTransport;
 }
@@ -72,7 +74,9 @@ export class BaseRequest {
       }
     }
 
-    if (LOGOUT_CODES.has(code) || MODAL_LOGOUT_CODES.has(code) || EXPIRED_TOKEN_CODES.has(code)) {
+    if (MODAL_LOGOUT_CODES.has(code)) {
+      this.options.onModalLogout?.(response.data.message);
+    } else if (LOGOUT_CODES.has(code) || EXPIRED_TOKEN_CODES.has(code)) {
       this.options.onAuthExpired?.();
     } else {
       this.options.onBackendError?.(response.data.message);
@@ -107,13 +111,25 @@ export class BaseRequest {
 export type RequestMethod = Extract<Method, 'delete' | 'get' | 'patch' | 'post' | 'put'>;
 
 const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || undefined
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/proxy-default'
 });
 
 const defaultTransport: RequestTransport = async (config: RequestConfig) => {
-  const response = await httpClient.request<BaseResponse<unknown>>(config);
+  try {
+    const response = await httpClient.request<BaseResponse<unknown>>(config);
 
-  return { data: response.data, status: response.status };
+    return { data: response.data, status: response.status };
+  } catch (error) {
+    const axiosError = error as AxiosError<BaseResponse<unknown>>;
+    const response = axiosError.response;
+
+    if (response?.data) {
+      return { data: response.data, status: response.status };
+    }
+
+    message.error(axiosError.message || '网络请求失败');
+    throw error;
+  }
 };
 
 async function refreshAccessToken(): Promise<boolean> {
@@ -141,6 +157,15 @@ async function refreshAccessToken(): Promise<boolean> {
 export const request = new BaseRequest({
   getToken,
   onAuthExpired: clearAuthStorage,
+  onBackendError: (content) => message.error(content || '请求失败'),
+  onModalLogout: (content) => {
+    Modal.error({
+      content: content || '登录状态已失效，请重新登录。',
+      maskClosable: false,
+      onOk: clearAuthStorage,
+      title: '提示'
+    });
+  },
   refreshToken: refreshAccessToken,
   transport: defaultTransport
 });

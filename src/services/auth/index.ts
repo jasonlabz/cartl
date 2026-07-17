@@ -17,7 +17,7 @@ export function getUserInfoApi(): Promise<UserInfo> {
 }
 
 export function loginApi(userName: string, password: string): Promise<LoginToken> {
-  return request.post<LoginToken>('/auth/login', { data: { password, userName } });
+  return request.post<LoginToken>('/auth/login', { data: { userName, password } });
 }
 
 export function refreshTokenApi(refreshToken: string): Promise<LoginToken> {

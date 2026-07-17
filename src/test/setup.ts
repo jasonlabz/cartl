@@ -13,3 +13,16 @@ Object.defineProperty(window, 'matchMedia', {
     removeListener: () => undefined
   })
 });
+
+class ResizeObserverMock {
+  disconnect(): void {}
+
+  observe(): void {}
+
+  unobserve(): void {}
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  configurable: true,
+  value: ResizeObserverMock
+});
